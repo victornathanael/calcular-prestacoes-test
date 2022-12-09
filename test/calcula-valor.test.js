@@ -5,14 +5,14 @@ describe('calcularMontante', () => {
         // Operação
         const montante = calculaValor.calcularMontante(100, 0.175, 1);
 
-        //Resultado ou Comportamento esperado
+        // Resultado ou Comportamento esperado
         expect(montante).toBe(100);
     });
 
     test('Com 4 prestações o montante é acrescido de juros', () => {
         // Operação
         const montante = calculaValor.calcularMontante(500, 0.025, 4);
-        //Resultado ou Comportamento esperado
+        // Resultado ou Comportamento esperado
         expect(montante).toBe(538.45);
     });
 });
@@ -86,5 +86,34 @@ describe('calcularPrestacoes', () => {
             prestacoes[0] + prestacoes[1] + prestacoes[2]
         );
         expect(soma).toBe(montante);
+
+        for (let i = 0; i < prestacoes.length - 1; i++) {
+            const j = i + 1;
+            expect(prestacoes[i]).toBeGreaterThanOrEqual(prestacoes[j]);
+        }
+    });
+
+    test('Desafio semi-final', () => {
+        // Given
+        const numeroPrestacoes = 3;
+        const montante = 101.994;
+
+        // Quando (when)
+        const prestacoes = calculaValor.calcularPrestacoes(
+            montante,
+            numeroPrestacoes
+        );
+
+        // Então (then)
+        expect(prestacoes.length).toBe(numeroPrestacoes);
+        const soma = calculaValor.arredondar(
+            prestacoes[0] + prestacoes[1] + prestacoes[2]
+        );
+        expect(soma).toBe(calculaValor.arredondar(montante));
+
+        for (let i = 0; i < prestacoes.length - 1; i++) {
+            const j = i + 1;
+            expect(prestacoes[i]).toBeGreaterThanOrEqual(prestacoes[j]);
+        }
     });
 });
