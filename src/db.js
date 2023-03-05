@@ -1,8 +1,7 @@
-const dotenv = require('dotenv');
-dotenv.config();
+require('dotenv').config();
 const Sequelize = require('sequelize');
 
-const sequelize = new Sequelize(DB_CONN_STRING, {
+const sequelize = new Sequelize(process.env.DB_CONN_STRING, {
     logging: false,
 });
 
@@ -54,7 +53,7 @@ const consultaModel = (sequelize, DataTypes) => {
 const cliente = clienteModel(sequelize, Sequelize.DataTypes);
 const consulta = consultaModel(sequelize, Sequelize.DataTypes);
 
-cliente.hasMany(consulta, { as: 'Consulta' });
+cliente.hasMany(consulta, { as: 'Consultas' });
 consulta.belongsTo(cliente);
 
 module.exports = {
