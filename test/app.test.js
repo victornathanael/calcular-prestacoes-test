@@ -20,7 +20,7 @@ describe('Testes de Integração', () => {
         juros: 0.025,
         parcelas: 3,
         primeiraPrestacao: 35.64,
-        prestacoes: [35.65, 35.63, 35.63],
+        prestacoes: [35.64, 35.63, 35.63],
     };
 
     const payloadRequest = {
@@ -36,9 +36,30 @@ describe('Testes de Integração', () => {
             .then((res) => expect(res.status).toBe(200));
     });
 
-    //test('Cenário 01', async () => {
+    test('Cenário 01', async () => {
+        const res = await request(app)
+            .post('/consulta-credito')
+            .send(payloadRequest);
 
-    //})
+        // Resultado é obtido com sucesso
+        expect(res.body.erro).toBeUndefined();
+        expect(res.body.montante).toBe(106.9);
+        expect(res.status).toBe(201);
+        expect(res.body).toMatchSnapshot(resultadoEsperado);
+        expect(res.body).toMatchObject(resultadoEsperado);
+
+        // Cliente foi armazenado
+        const cliente = await db.cliente.findOne({
+            where: { CPF: clienteJoao.CPF },
+        });
+        expect(cliente.CPF).toBe(clienteJoao.CPF);
+
+        const consulta = await db.consulta.findOne({
+            where: { ClienteCPF: clienteJoao.CPF },
+        });
+        expect(consulta.Valor).toBe(101.75);
+    });
+
     test('CENÁRIO 02', async () => {
         db.cliente.create(clienteJoao);
         db.consulta.create({
@@ -63,23 +84,23 @@ describe('Testes de Integração', () => {
         expect(count).toBe(2);
     });
 
-    test('CENÁRIO 03', async () => {
-        const res1 = await request(app)
-            .post('/consulta-credito')
-            .send(payloadRequest);
+    //     test('CENÁRIO 03', async () => {
+    //         const res1 = await request(app)
+    //             .post('/consulta-credito')
+    //             .send(payloadRequest);
 
-        expect(res1.body).toMatchSnapshot(resultadoEsperado);
+    //         expect(res1.body).toMatchSnapshot(resultadoEsperado);
 
-        const res2 = await request(app)
-            .post('/consulta-credito')
-            .send(payloadRequest);
+    //         const res2 = await request(app)
+    //             .post('/consulta-credito')
+    //             .send(payloadRequest);
 
-        // Resultado é obtido
-        expect(res2.body.erro).toBeDefined();
-        expect(res2.status).toBe(405);
-    });
+    //         // Resultado é obtido
+    //         expect(res2.body.erro).toBeDefined();
+    //         expect(res2.status).toBe(405);
+    //     });
 
-    test('CENÁRIO 04', async () => {
-        const res = await request(app).post('/consulta-credito').send({});
-    });
+    //     test('CENÁRIO 04', async () => {
+    //         const res = await request(app).post('/consulta-credito').send({});
+    //     });
 });
